@@ -1,0 +1,246 @@
+.page { padding: 40px 0 80px; }
+
+.inner {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.headerIcon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Worker selector */
+.workerCard {
+  padding: 16px;
+}
+
+.workerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.workerHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Form */
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.section {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.section:last-child { border-bottom: none; }
+
+.sectionLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+/* Day rating buttons */
+.ratingButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.ratingBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.ratingBtn:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.ratingSelected {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.ratingEmoji { font-size: 1.4rem; }
+
+/* Slider hint */
+.sliderHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Flow buttons */
+.flowButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.flowBtn {
+  padding: 10px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.flowBtn:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.flowSelected {
+  border-color: var(--brand-primary);
+  background: rgba(124,58,237,0.12);
+  color: var(--text-accent);
+  font-weight: 700;
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px;
+  font-size: 1rem;
+}
+
+/* Result */
+.resultCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.resultIcon { font-size: 2.5rem; line-height: 1; }
+
+.resultTitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.resultBadge { font-size: 0.85rem; padding: 6px 14px; }
+
+.probBar { display: flex; flex-direction: column; }
+
+.probLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.probValue {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-top: 6px;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.msg {
+  padding: 14px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+}
+
+.msgLang {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.msg p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.confidenceNote {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 10px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 10px 14px;
+  background: rgba(245,158,11,0.07);
+  border-left: 2px solid rgba(245,158,11,0.4);
+  border-radius: var(--radius-sm);
+  line-height: 1.5;
+}
+
+.resultActions {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .ratingButtons { flex-direction: column; }
+  .header { gap: 10px; }
+}

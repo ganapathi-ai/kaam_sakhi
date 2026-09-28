@@ -1,0 +1,189 @@
+.page { padding: 40px 0 80px; }
+
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.pageSub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.row {
+  margin-top: 20px;
+}
+
+/* Prediction card */
+.predCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.riskBars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.riskBarRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.riskCount {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-width: 80px;
+  text-align: right;
+}
+
+.totalPred {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.symptomBars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.symptomRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.symptomLabel {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  min-width: 110px;
+}
+
+.symptomVal {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Org list */
+.orgList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.orgItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  gap: 8px;
+}
+
+.orgName {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.orgMeta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.orgCount {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-accent);
+  white-space: nowrap;
+}
+
+/* Trend chart */
+.trendCard { margin-top: 20px; }
+
+.trendChart { overflow-x: auto; }
+
+.chartBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 560px;
+  padding-bottom: 8px;
+}
+
+.chartBarGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.barStack {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 80px;
+}
+
+.bar {
+  width: 14px;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.6s cubic-bezier(0.4,0,0.2,1);
+  min-height: 2px;
+}
+
+.barCheckin { background: rgba(124,58,237,0.55); }
+.barCheckin:hover { background: rgba(124,58,237,0.9); }
+
+.barDisruption { background: rgba(239,68,68,0.6); }
+.barDisruption:hover { background: rgba(239,68,68,0.9); }
+
+.barLabel {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transform: rotate(-30deg);
+  transform-origin: top center;
+}
+
+/* Occ table */
+.occCard { margin-top: 20px; }
+
+/* Footer */
+.footerAction {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .page { padding: 24px 0 48px; }
+  .pageHeader { flex-direction: column; align-items: flex-start; }
+}
