@@ -1,19 +1,22 @@
 import { NextRequest } from 'next/server';
-import { query, queryOne } from '@/lib/db';
+import { query, queryOne, getDb } from '@/lib/db';
 import { generateFullDataset } from '@/lib/synthetic';
 
 export const dynamic = 'force-dynamic';
 
+// Extend timeout for large seed operations
+export const maxDuration = 300; // 5 minutes
+
 /**
  * POST /api/seed
- * Seeds the database with synthetic workers + check-ins
+ * Seeds the database with synthetic workers + check-ins using batch inserts
  */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
     const days = body.days ?? 180;
 
-    // First ensure schema exists
+    // Ensure schema exists
     await query(`
       CREATE TABLE IF NOT EXISTS organizations (
         id SERIAL PRIMARY KEY,
@@ -76,7 +79,6 @@ export async function POST(req: NextRequest) {
       )
     `);
 
-    // Create indexes
     await query(`CREATE INDEX IF NOT EXISTS idx_checkins_worker_date ON checkins(worker_id, checkin_date DESC)`);
     await query(`CREATE INDEX IF NOT EXISTS idx_workers_org ON workers(org_id)`);
 
@@ -94,11 +96,17 @@ export async function POST(req: NextRequest) {
     let checkinsInserted = 0;
     let skipped = 0;
 
+    // Build phone->id map for existing workers
+    const existingRows = await query<{ phone: string; id: number }>(
+      'SELECT phone, id FROM workers'
+    );
+    const phoneToId = new Map(existingRows.map(r => [r.phone, r.id]));
+
     for (const w of workers) {
-      const existing = await queryOne<{ id: number }>(
-        'SELECT id FROM workers WHERE phone = $1', [w.phone]
-      );
-      if (existing) { skipped++; continue; }
+      if (phoneToId.has(w.phone)) {
+        skipped++;
+        continue;
+      }
 
       const row = await queryOne<{ id: number }>(
         `INSERT INTO workers (name, phone, age, occupation, location, org_id, avg_cycle_length)
@@ -108,24 +116,56 @@ export async function POST(req: NextRequest) {
 
       if (!row) continue;
       workersInserted++;
+      phoneToId.set(w.phone, row.id);
+    }
 
-      // Insert checkins in batches of 50
-      const workerCheckins = checkins.filter(c => c.worker_phone === w.phone);
-      for (let i = 0; i < workerCheckins.length; i += 50) {
-        const batch = workerCheckins.slice(i, i + 50);
-        for (const c of batch) {
-          await query(
-            `INSERT INTO checkins
-              (worker_id, checkin_date, day_rating, pain_level, fatigue_level,
-               sleep_quality, flow_present, workload, cycle_day, high_disruption, is_synthetic)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,true)
-             ON CONFLICT (worker_id, checkin_date) DO NOTHING`,
-            [row.id, c.checkin_date, c.day_rating, c.pain_level, c.fatigue_level,
-             c.sleep_quality, c.flow_present, c.workload, c.cycle_day, c.high_disruption]
-          );
-          checkinsInserted++;
-        }
-      }
+    // Batch insert checkins — 500 rows per INSERT for speed
+    const BATCH_SIZE = 500;
+    const db = getDb();
+
+    // Build all rows with resolved worker IDs
+    const allRows: Array<[number, string, number, number, number, number, boolean, number, number, boolean]> = [];
+    for (const c of checkins) {
+      const wid = phoneToId.get(c.worker_phone);
+      if (!wid) continue;
+      allRows.push([
+        wid,
+        c.checkin_date,
+        c.day_rating,
+        c.pain_level,
+        c.fatigue_level,
+        c.sleep_quality,
+        c.flow_present,
+        c.workload,
+        c.cycle_day,
+        c.high_disruption,
+      ]);
+    }
+
+    for (let i = 0; i < allRows.length; i += BATCH_SIZE) {
+      const batch = allRows.slice(i, i + BATCH_SIZE);
+      if (batch.length === 0) continue;
+
+      // Build VALUES clause: ($1,$2,...,$10), ($11,$12,...,$20), ...
+      const paramCount = 10;
+      const valueStrings = batch.map((_, rowIdx) => {
+        const base = rowIdx * paramCount;
+        const cols = Array.from({ length: paramCount }, (_, col) => `$${base + col + 1}`);
+        return `(${cols.join(',')})`;
+      }).join(',');
+
+      const flatParams = batch.flat();
+
+      await db.query(
+        `INSERT INTO checkins
+           (worker_id, checkin_date, day_rating, pain_level, fatigue_level,
+            sleep_quality, flow_present, workload, cycle_day, high_disruption)
+         VALUES ${valueStrings}
+         ON CONFLICT (worker_id, checkin_date) DO NOTHING`,
+        flatParams
+      );
+
+      checkinsInserted += batch.length;
     }
 
     return Response.json({
@@ -136,6 +176,7 @@ export async function POST(req: NextRequest) {
         workers_skipped: skipped,
         checkins_inserted: checkinsInserted,
         days_per_worker: days,
+        total_rows: allRows.length,
       },
     });
   } catch (err) {
