@@ -69,9 +69,9 @@ function seededRandom(): number {
 
 function randGaussian(mean: number, std: number): number {
   // Box-Muller transform
-  const u1 = seededRandom();
+  const u1 = Math.max(0.0001, Math.min(0.9999, seededRandom()));
   const u2 = seededRandom();
-  const z = Math.sqrt(-2 * Math.log(u1 + 0.001)) * Math.cos(2 * Math.PI * u2);
+  const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
   return Math.max(0, Math.min(3, mean + std * z));
 }
 
