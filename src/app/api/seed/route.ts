@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     await query(`
       CREATE TABLE IF NOT EXISTS organizations (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(200) NOT NULL,
+        name VARCHAR(200) NOT NULL UNIQUE,
         type VARCHAR(50) NOT NULL DEFAULT 'ngo',
         city VARCHAR(100),
         contact_email VARCHAR(200),

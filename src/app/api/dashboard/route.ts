@@ -42,8 +42,8 @@ export async function GET(req: NextRequest) {
       `SELECT
          COUNT(c.id) AS total_checkins,
          SUM(CASE WHEN c.high_disruption THEN 1 ELSE 0 END) AS high_disruption_count,
-         ROUND(AVG(c.pain_level)::numeric, 2) AS avg_pain,
-         ROUND(AVG(c.fatigue_level)::numeric, 2) AS avg_fatigue,
+         ROUND(AVG(c.pain_level::float8)::numeric, 2) AS avg_pain,
+         ROUND(AVG(c.fatigue_level::float8)::numeric, 2) AS avg_fatigue,
          ROUND(
            (SUM(CASE WHEN c.high_disruption THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(c.id), 0))::numeric,
            1
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
        ORDER BY worker_count DESC`
     );
 
-    // Organizations
+    // Organizations — only unique names with workers, avoid duplicates from re-seeding
     const orgs = await query<{
       id: number;
       name: string;
@@ -118,11 +118,11 @@ export async function GET(req: NextRequest) {
       city: string;
       worker_count: number;
     }>(
-      `SELECT o.id, o.name, o.type, o.city, COUNT(w.id) AS worker_count
+      `SELECT DISTINCT ON (o.name) o.id, o.name, o.type, o.city, COUNT(w.id) AS worker_count
        FROM organizations o
        LEFT JOIN workers w ON w.org_id = o.id
        GROUP BY o.id
-       ORDER BY worker_count DESC`
+       ORDER BY o.name, worker_count DESC`
     );
 
     return Response.json({
